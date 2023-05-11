@@ -19,7 +19,7 @@ public class RecordItem : MonoBehaviour
             {
                 members[i].SetActive(true);
                 members[i].transform.Find("Text").GetComponent<Text>().text = record.personInfos[i].name;
-                members[i].transform.Find("Text_result").GetComponent<Text>().text = UI_Manager.Instance.resultContents[(int)record.personInfos[i].result];
+                members[i].transform.Find("Text_result").GetComponent<Text>().text = UI_Manager.Instance.resultContents[(int)record.personInfos[i].resulta];
             }
             else
             {

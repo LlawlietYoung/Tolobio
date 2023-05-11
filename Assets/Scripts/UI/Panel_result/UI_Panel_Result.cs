@@ -102,45 +102,87 @@ public class UI_Panel_Result : PanelBase
 
     private void SetResultInfo(PersonInfo person)
     {
-        switch (person.result)
+        //顶部面板已隐藏
+        //switch (person.resulta)
+        //{
+        //    case Result.invalid:
+        //        ima_result.sprite = sp_no;
+        //        break;
+        //    case Result.positive:
+        //        ima_result.sprite = sp_positive;
+        //        break;
+        //    case Result.negetive:
+        //        ima_result.sprite = sp_negetive;
+        //        break;
+        //    case Result.nodisk:
+        //        ima_result.sprite = sp_nodisk;
+        //        break;
+        //    case Result.none:
+        //        break;
+        //    default:
+        //        break;
+        //}
+        //ima_result.sprite = positive ? sp_positive : sp_negetive;
+        tt_name.text = person.name;
+        Debug.Log(person.resulta + "结果 " + person.name);
+        tt_result.text = UI_Manager.Instance.resultContents[(int)person.resulta];
+        tt_name_1.text = person.name;
+        tt_phone.text = person.phone;
+        //tt_result_1.text = positive ? "<color=green>阴性</color>" : "<color=red>阳性</color>";
+        switch (person.resulta)
         {
             case Result.invalid:
-                ima_result.sprite = sp_no;
+                tt_marka.text = "无效";
                 break;
             case Result.positive:
-                ima_result.sprite = sp_positive;
+                tt_marka.text = "<color=green>阴性</color>";
                 break;
             case Result.negetive:
-                ima_result.sprite = sp_negetive;
+                tt_marka.text = "<color=red>阳性</color>";
+                ima_warninga.gameObject.SetActive(true);
                 break;
             case Result.nodisk:
-                ima_result.sprite = sp_nodisk;
+                tt_marka.text = "未放盘片";
                 break;
             case Result.none:
                 break;
             default:
                 break;
         }
-        //ima_result.sprite = positive ? sp_positive : sp_negetive;
-        tt_name.text = person.name;
-        Debug.Log(person.result + "结果 " + person.name);
-        tt_result.text = UI_Manager.Instance.resultContents[(int)person.result];
-        tt_name_1.text = person.name;
-        tt_phone.text = person.phone;
-        //tt_result_1.text = positive ? "<color=green>阴性</color>" : "<color=red>阳性</color>";
-        switch (person.result)
+        switch (person.resultb)
         {
             case Result.invalid:
-                tt_result_1.text = "无效";
+                tt_markb.text = "无效";
                 break;
             case Result.positive:
-                tt_result_1.text = "<color=green>阴性</color>";
+                tt_markb.text = "<color=green>阴性</color>";
                 break;
             case Result.negetive:
-                tt_result_1.text = "<color=red>阳性</color>";
+                tt_markb.text = "<color=red>阳性</color>";
+                ima_warningb.gameObject.SetActive(true);
                 break;
             case Result.nodisk:
-                tt_result_1.text = "未放盘片";
+                tt_markb.text = "未放盘片";
+                break;
+            case Result.none:
+                break;
+            default:
+                break;
+        }
+        switch (person.resultc)
+        {
+            case Result.invalid:
+                tt_markc.text = "无效";
+                break;
+            case Result.positive:
+                tt_markc.text = "<color=green>阴性</color>";
+                break;
+            case Result.negetive:
+                tt_markc.text = "<color=red>阳性</color>";
+                ima_warningc.gameObject.SetActive(true);
+                break;
+            case Result.nodisk:
+                tt_markc.text = "未放盘片";
                 break;
             case Result.none:
                 break;
@@ -163,6 +205,9 @@ public class UI_Panel_Result : PanelBase
         tt_programname.text = "";
         tt_info.text = "";
         dataSingle._programRecord = null;
+        ima_warninga.gameObject.SetActive(false);
+        ima_warningb.gameObject.SetActive(false);
+        ima_warningc.gameObject.SetActive(false);
         foreach (var item in toggletags)
         {
             item.gameObject.SetActive(false);

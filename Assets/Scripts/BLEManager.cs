@@ -242,13 +242,14 @@ public class BLEManager : Singleton<BLEManager>
                                  break;
                              case CMDType.GET_TEST_DATA_g:
                                  Debug.Log("获取到了数据");
-                                 byte[] DataX_Y = result.DATA.GetArea(4, UI_Manager.Instance.programData.num * 32);
-                                 List<float[]> datas = new List<float[]>();
+                                 byte[] DataX_Y = result.DATA.GetArea(12, UI_Manager.Instance.programData.num * 32);
+                                 List<float[]> datasavages = new List<float[]>();
+                                 List<int[]> datas = new List<int[]>();
                                  for (int i = 0; i < UI_Manager.Instance.programData.num; i++)
                                  {
                                      byte[] linedata = new byte[32];
                                      int[] linedata2 = new int[16];//高位和低位转成int
-                                     float[] linedata3 = new float[4];
+                                     float[] linedata3 = new float[4];//计算平均数 用于画线  暂时不用
                                      for (int j = 0; j < linedata.Length; j++)
                                      {
                                          linedata[j] = DataX_Y[i * 32 + j];
@@ -262,22 +263,34 @@ public class BLEManager : Singleton<BLEManager>
                                          float r = (linedata2[j * 4] + linedata2[j * 4 + 1] + linedata2[j * 4 + 2] + linedata2[j * 4 + 3]) / 4f;
                                          linedata3[j] = r;
                                      }
-                                     datas.Add(linedata3);
+                                     //按照平均数计算，暂时弃用
+                                     datasavages.Add(linedata3);
+                                     datas.Add(linedata2);
                                  }
+                                 //荧光数据每次获得数据 通道1-16 每4个一组 分别对应指标DABC  D指标不显示  不用保存  不用上传
                                  for (int i = 0; i < UI_Manager.Instance.personInfos.Length; i++)
                                  {
                                      for (int j = 0; j < datas.Count; j++)
                                      {
+                                         UI_Manager.Instance.personInfos[i].dataas[j] = datas[j][i * 4 + 1];
+                                         UI_Manager.Instance.personInfos[i].databs[j] = datas[j][i * 4 + 2];
+                                         UI_Manager.Instance.personInfos[i].datacs[j] = datas[j][i * 4 + 3];
+                                     }
+                                 }
+                                 for (int i = 0; i < UI_Manager.Instance.personInfos.Length; i++)
+                                 {
+                                     for (int j = 0; j < datasavages.Count; j++)
+                                     {
                                          //if (datas[j][i] < 10) continue;
-                                         UI_Manager.Instance.personInfos[i].avages[j] = datas[j][i];
+                                         UI_Manager.Instance.personInfos[i].avages[j] = datasavages[j][i];
                                      }
                                  }
                                  Debug.Log("接受到了数据即将绘图！");
-                                 onGetData?.Invoke(datas);
+                                 onGetData?.Invoke(datasavages);
                                  if (result.ID == 0)//得到了结果
                                  {
                                      Debug.Log(BitConverter.ToString(new byte[] { result.DATA[0], result.DATA[1], result.DATA[2], result.DATA[3] }));
-                                     UI_Manager.Instance.OnCheckDone(new byte[] { result.DATA[0], result.DATA[1], result.DATA[2], result.DATA[3] });
+                                     UI_Manager.Instance.OnCheckDone(new byte[] { result.DATA[0], result.DATA[1], result.DATA[2], result.DATA[3], result.DATA[4], result.DATA[5], result.DATA[6], result.DATA[7], result.DATA[8], result.DATA[9], result.DATA[10], result.DATA[11] });
                                  }
                                  break;
                              default:

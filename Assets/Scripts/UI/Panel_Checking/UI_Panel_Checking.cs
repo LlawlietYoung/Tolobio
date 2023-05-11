@@ -71,10 +71,12 @@ public class UI_Panel_Checking : PanelBase
             btn_next.interactable = true;
             for (int i = 0; i < UI_Manager.Instance.personInfos.Length; i++)
             {
-                if(!string.IsNullOrEmpty(UI_Manager.Instance.personInfos[i].name))
+                if (!string.IsNullOrEmpty(UI_Manager.Instance.personInfos[i].name))
                 {
-                    Debug.Log("得到了结果" + (Result)(result[i]));
-                    UI_Manager.Instance.personInfos[i].result = (Result)(result[i]);
+                    //Debug.Log("得到了结果" + (Result)(result[i * 3 + 0]));
+                    UI_Manager.Instance.personInfos[i].resulta = (Result)(result[i * 3 + 0]);
+                    UI_Manager.Instance.personInfos[i].resultb = (Result)(result[i * 3 + 1]);
+                    UI_Manager.Instance.personInfos[i].resultc = (Result)(result[i * 3 + 2]);
                 }
             }
             //UI_Manager.Instance.SaveRecord(BLEManager.Instance.bLESevice.deviceAddress,1, true);

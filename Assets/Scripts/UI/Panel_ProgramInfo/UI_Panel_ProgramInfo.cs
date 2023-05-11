@@ -228,7 +228,7 @@ public class UI_Panel_ProgramInfo : PanelBase
                     short wd = (short)(float.Parse(UI_Manager.Instance.programData.speed) * 100);//温度乘以100
                     byte[] wdbyte = BitConverter.GetBytes(wd);
                     BitConverter.GetBytes(wd);
-                    byte[] times = new byte[] { (byte)UI_Manager.Instance.programData.gap, (byte)UI_Manager.Instance.programData.num, wdbyte[1], wdbyte[0], (byte)int.Parse(UI_Manager.Instance.programData.standard1), (byte)((int)(float.Parse(UI_Manager.Instance.programData.threshold1) * 10)) };
+                    byte[] times = new byte[] { (byte)UI_Manager.Instance.programData.gap, (byte)UI_Manager.Instance.programData.num, wdbyte[1], wdbyte[0], (byte)int.Parse(UI_Manager.Instance.programData.standard1), (byte)((int)(float.Parse(UI_Manager.Instance.programData.threshold1) * 10)),(byte)((int)(float.Parse(UI_Manager.Instance.programData.threshold2) * 10)), (byte)((int)(float.Parse(UI_Manager.Instance.programData.threshold3) * 10)), (byte)((int)(float.Parse(UI_Manager.Instance.programData.threshold4) * 10)) };
                     byte[] result = param.Combine(pos).Combine(times);
                     BLEManager.Instance.SendMessageToMCU(CMDType.SET_PARAMETERS, (byte)UI_Manager.Instance.programData.flag, result);
                     UI_Manager.Instance.OpenPanel<UI_Panel_OperatingTips>(UILevel.common, new UI_Panel_OperatingTips_data()

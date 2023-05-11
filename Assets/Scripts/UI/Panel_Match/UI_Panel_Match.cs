@@ -157,6 +157,9 @@ public class UI_Panel_Match : PanelBase
                  for (int i = 0; i < UI_Manager.Instance.personInfos.Length; i++)
                  {
                      UI_Manager.Instance.personInfos[i].avages = new double[res.data.num];
+                     UI_Manager.Instance.personInfos[i].dataas = new double[res.data.num];
+                     UI_Manager.Instance.personInfos[i].databs = new double[res.data.num];
+                     UI_Manager.Instance.personInfos[i].datacs = new double[res.data.num];
                  }
              }
              else

@@ -26,8 +26,10 @@ public class PersonInfo
 {
     public string name="";
     public string phone="";
-    public Result result=Result.none;
-    public string markA, markB, markC;
+    public Result resulta=Result.none;
+    public Result resultb=Result.none;
+    public Result resultc=Result.none;
+    public double[] dataas, databs, datacs;
     public double[] avages;
 }
 
@@ -405,7 +407,7 @@ public class UI_Manager : Singleton<UI_Manager>
                             break;
                     }
                     string result = "";
-                    switch (personInfos[i].result)
+                    switch (personInfos[i].resulta)
                     {
                         case Result.invalid:
                             result = "无效";
@@ -425,13 +427,34 @@ public class UI_Manager : Singleton<UI_Manager>
                             break;
                     }
                     string ori = "";
-                    for (int k = 0; k < personInfos[i].avages.Length; k++)
+                    //原来上传平均数  已弃用
+                    //for (int k = 0; k < personInfos[i].avages.Length; k++)
+                    //{
+                    //    if(k == 0)
+                    //        ori += personInfos[i].avages[k];
+                    //    else
+                    //        ori += "-" + personInfos[i].avages[k];
+                    //}
+                    //上传三个指标
+                    string oria = "";
+                    for (int k = 0; k < personInfos[i].dataas.Length; k++)
                     {
-                        if(k == 0)
-                            ori += personInfos[i].avages[k];
-                        else
-                            ori += "-" + personInfos[i].avages[k];
+                        if(k == 0) oria += personInfos[i].dataas[k];
+                        else oria += "-" + personInfos[i].dataas[k];
                     }
+                    string orib = "";
+                    for (int k = 0; k < personInfos[i].databs.Length; k++)
+                    {
+                        if (k == 0) orib += personInfos[i].databs[k];
+                        else orib += "-" + personInfos[i].databs[k];
+                    }
+                    string oric = "";
+                    for (int k = 0; k < personInfos[i].datacs.Length; k++)
+                    {
+                        if (k == 0) oric += personInfos[i].datacs[k];
+                        else oric += "-" + personInfos[i].datacs[k];
+                    }
+                    ori = $"{oria}:{orib}:{oric}";
                     records.Add(new Record()
                     {
                         checkChannel = "通道" + c,
