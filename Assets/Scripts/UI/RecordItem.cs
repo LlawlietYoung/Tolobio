@@ -39,8 +39,17 @@ public class RecordItem : MonoBehaviour
         });
         btn_delete.onClick.AddListener(() =>
         {
-            UI_Manager.Instance.DeleteRecord(record);
-            Destroy(gameObject);
+            UI_Manager.Instance.OpenPanel<UI_PanelMessageBox>(UILevel.pop, new MessageBoxData()
+            {
+                title = "删除记录",
+                content = "是否删除记录，点击空白处可取消删除操作。",
+                onconfirm = () =>
+                {
+                    UI_Manager.Instance.DeleteRecord(record);
+                    Destroy(gameObject);
+                },
+                bgindex = 1
+            });
         });
     }
 }

@@ -46,6 +46,9 @@ public class ProgramRecord
     public string qrcode;
     public bool upload;
     public string savedate;
+    public string marka;
+    public string markb;
+    public string markc;
 }
 
 
@@ -115,7 +118,7 @@ public class UI_Manager : Singleton<UI_Manager>
     {
         resultContents = new string[]
         {
-            "无效","<color=green>结果阴性</color>","<color=red>结果阳性</color>","未放盘片"
+            "无效","<color=green>结果阴性</color>","<color=red>结果阳性</color>","未放盘片","未返回结果"
         };
         programData = new ProgramData();
         if (!BLEManager.Instance.IsInited) BLEManager.Instance.InitBLE();
@@ -228,6 +231,7 @@ public class UI_Manager : Singleton<UI_Manager>
                                      string temp = res.data.lxParams.Replace("[", "").Replace("]", "").Replace("(", "").Replace(")", "");
                                      string[] datas = temp.Split(',');
                                      byte[] param = new byte[datas.Length];
+                                     UI_Manager.Instance.checktime_check1 = 0;
 
                                      for (int i = 1; i < datas.Length; i += 3)
                                      {
@@ -236,7 +240,8 @@ public class UI_Manager : Singleton<UI_Manager>
                                          else
                                              UI_Manager.Instance.checktime_check1 += int.Parse(datas[i]);
                                      }
-                                     UI_Manager.Instance.checktime_total = UI_Manager.Instance.checktime_check1 + res.data.gap * res.data.num;
+                                     UI_Manager.Instance.checktime_total = UI_Manager.Instance.checktime_check1 + res.data.gap * res.data.num + 10;
+                                     Debug.Log("总时长:" + checktime_total);
 
                                  }
                              });
@@ -343,16 +348,19 @@ public class UI_Manager : Singleton<UI_Manager>
         ProgramRecord programRecord = new ProgramRecord();
         programRecord.programeinfo = programData.remark;
         programRecord.programname = programData.name;
-        programRecord.date = DateTime.Now.ToString();
+        //programRecord.date = DateTime.Now.ToString();
         //Debug.Log(programRecord.date + "时间      ");
         programRecord.bleadress = bleadress;
         programRecord.done = done;
         programRecord.totaltime = this.checktime_total;
-        programRecord.progress = progress;
+        programRecord.progress = Mathf.Clamp((float)progress,0,1);
         programRecord.qrcode = this.qrcode;
         programRecord.upload = this.UploadRecord;
         programRecord.personInfos = personInfos;
         programRecord.date = DateTime.Now.ToString();
+        programRecord.marka = programData.index1;
+        programRecord.markb = programData.index2;
+        programRecord.markc = programData.index3;
         string j = JsonMapper.ToJson(programRecord);
         Debug.Log(j + "一条记录");
         if (savenew)
@@ -406,26 +414,61 @@ public class UI_Manager : Singleton<UI_Manager>
                         default:
                             break;
                     }
-                    string result = "";
+                    string resulta = "N";
                     switch (personInfos[i].resulta)
                     {
                         case Result.invalid:
-                            result = "无效";
+                            resulta = "无效";
                             break;
                         case Result.positive:
-                            result = "阴性";
+                            resulta = "阴性";
                             break;
                         case Result.negetive:
-                            result = "阳性";
+                            resulta = "阳性";
                             break;
                         case Result.nodisk:
-                            result = "未放盘片";
-                            break;
-                        case Result.none:
+                            resulta = "未放盘片";
                             break;
                         default:
                             break;
                     }
+                    string resultb = "N";
+                    switch (personInfos[i].resultb)
+                    {
+                        case Result.invalid:
+                            resultb = "无效";
+                            break;
+                        case Result.positive:
+                            resultb = "阴性";
+                            break;
+                        case Result.negetive:
+                            resultb = "阳性";
+                            break;
+                        case Result.nodisk:
+                            resultb = "未放盘片";
+                            break;
+                        default:
+                            break;
+                    }
+                    string resultc = "N";
+                    switch (personInfos[i].resultb)
+                    {
+                        case Result.invalid:
+                            resultc = "无效";
+                            break;
+                        case Result.positive:
+                            resultc = "阴性";
+                            break;
+                        case Result.negetive:
+                            resultc = "阳性";
+                            break;
+                        case Result.nodisk:
+                            resultc = "未放盘片";
+                            break;
+                        default:
+                            break;
+                    }
+                    string result = $"{programRecord.marka}:{resulta};{programRecord.markb}:{resultb};{programRecord.markc}:{resultc}";
                     string ori = "";
                     //原来上传平均数  已弃用
                     //for (int k = 0; k < personInfos[i].avages.Length; k++)
@@ -454,11 +497,11 @@ public class UI_Manager : Singleton<UI_Manager>
                         if (k == 0) oric += personInfos[i].datacs[k];
                         else oric += "-" + personInfos[i].datacs[k];
                     }
-                    ori = $"{oria}:{orib}:{oric}";
+                    ori = $"{oria};{orib};{oric}";
                     records.Add(new Record()
                     {
                         checkChannel = "通道" + c,
-                        checkDate = "data",
+                        checkDate = programRecord.date,
                         checkResult = result,
                         name = personInfos[i].name,
                         originData = ori,

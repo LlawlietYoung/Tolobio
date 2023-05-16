@@ -133,6 +133,7 @@ public class HttpHelper
               }
           });
         request.SetHeader("Content-Type", "application/json");
+        Debug.Log("删除数据" + JsonMapper.ToJson(records));
         request.RawData = Encoding.UTF8.GetBytes(JsonMapper.ToJson(records));
         request.Send();
     }

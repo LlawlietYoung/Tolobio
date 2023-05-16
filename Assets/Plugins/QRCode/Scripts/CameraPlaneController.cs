@@ -156,7 +156,7 @@ public class CameraPlaneController : MonoBehaviour
 			transform.localScale = new Vector3(-1*height/10, 1.0f, width/10);
 #endif
 		}
-		else if (Screen.orientation == ScreenOrientation.Landscape ||
+		else if (Screen.orientation == ScreenOrientation.LandscapeLeft ||
 		  Screen.orientation == ScreenOrientation.LandscapeLeft)
 		{
 

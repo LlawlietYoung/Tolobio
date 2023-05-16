@@ -23,6 +23,7 @@ public class UI_Panel_Result : PanelBase
     #region 信息
     public Text tt_name_1, tt_phone,tt_indexa, tt_marka,tt_indexb, tt_markb,tt_indexc, tt_markc, tt_result_1;
     public Image ima_warninga, ima_warningb, ima_warningc;
+    public Sprite sp_warning_red, sp_warning_gray;
     public GameObject toggleGroup;
     public Toggle[] toggletags;
     public ModelDataSingle dataSingle;
@@ -85,9 +86,9 @@ public class UI_Panel_Result : PanelBase
         }
         //toggletags[0].isOn = true;
         dataSingle.Init(resultData.programRecord);
-        tt_indexa.text = UI_Manager.Instance.programData.index1;
-        tt_indexb.text = UI_Manager.Instance.programData.index2;
-        tt_indexc.text = UI_Manager.Instance.programData.index3;
+        tt_indexa.text = resultData.programRecord.marka;
+        tt_indexb.text = resultData.programRecord.markb;
+        tt_indexc.text = resultData.programRecord.markc;
         for (int i = 0; i < resultData.programRecord.personInfos.Length; i++)
         {
             if (!string.IsNullOrEmpty(resultData.programRecord.personInfos[i].name))
@@ -124,7 +125,7 @@ public class UI_Panel_Result : PanelBase
         //}
         //ima_result.sprite = positive ? sp_positive : sp_negetive;
         tt_name.text = person.name;
-        Debug.Log(person.resulta + "结果 " + person.name);
+        Debug.Log(person.resulta + " " + (int)person.resulta + "结果 " + person.name);
         tt_result.text = UI_Manager.Instance.resultContents[(int)person.resulta];
         tt_name_1.text = person.name;
         tt_phone.text = person.phone;
@@ -133,6 +134,8 @@ public class UI_Panel_Result : PanelBase
         {
             case Result.invalid:
                 tt_marka.text = "无效";
+                ima_warninga.gameObject.SetActive(true);
+                ima_warninga.sprite = sp_warning_gray;
                 break;
             case Result.positive:
                 tt_marka.text = "<color=green>阴性</color>";
@@ -140,6 +143,7 @@ public class UI_Panel_Result : PanelBase
             case Result.negetive:
                 tt_marka.text = "<color=red>阳性</color>";
                 ima_warninga.gameObject.SetActive(true);
+                ima_warninga.sprite = sp_warning_red;
                 break;
             case Result.nodisk:
                 tt_marka.text = "未放盘片";
@@ -153,6 +157,8 @@ public class UI_Panel_Result : PanelBase
         {
             case Result.invalid:
                 tt_markb.text = "无效";
+                ima_warningb.gameObject.SetActive(true);
+                ima_warningb.sprite = sp_warning_gray;
                 break;
             case Result.positive:
                 tt_markb.text = "<color=green>阴性</color>";
@@ -160,6 +166,7 @@ public class UI_Panel_Result : PanelBase
             case Result.negetive:
                 tt_markb.text = "<color=red>阳性</color>";
                 ima_warningb.gameObject.SetActive(true);
+                ima_warningb.sprite = sp_warning_red;
                 break;
             case Result.nodisk:
                 tt_markb.text = "未放盘片";
@@ -173,6 +180,8 @@ public class UI_Panel_Result : PanelBase
         {
             case Result.invalid:
                 tt_markc.text = "无效";
+                ima_warningc.gameObject.SetActive(true);
+                ima_warningc.sprite = sp_warning_gray;
                 break;
             case Result.positive:
                 tt_markc.text = "<color=green>阴性</color>";
@@ -180,6 +189,7 @@ public class UI_Panel_Result : PanelBase
             case Result.negetive:
                 tt_markc.text = "<color=red>阳性</color>";
                 ima_warningc.gameObject.SetActive(true);
+                ima_warningc.sprite = sp_warning_red;
                 break;
             case Result.nodisk:
                 tt_markc.text = "未放盘片";

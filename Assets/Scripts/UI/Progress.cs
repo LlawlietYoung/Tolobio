@@ -11,8 +11,9 @@ public class Progress : MonoBehaviour
     {
         set
         {
-            tt_progress.text = value.ToString("p2");
-            ima_progress.fillAmount = value;
+            float temp = Mathf.Clamp(value, 0, 1);
+            tt_progress.text = temp.ToString("p2");
+            ima_progress.fillAmount = temp;
         }
     }
     public void ResetValue()

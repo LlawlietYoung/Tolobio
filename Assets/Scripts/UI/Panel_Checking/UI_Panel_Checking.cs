@@ -12,6 +12,8 @@ public class UI_Panel_Checking : PanelBase
     public Progress progress;
     private Coroutine cor;
     public ModelData model;
+    private bool last = false;
+
     //public GifPlayer loading;
 
     public override void OnClose()
@@ -63,10 +65,17 @@ public class UI_Panel_Checking : PanelBase
                 //保存结果
                 programRecord = UI_Manager.Instance.SaveRecord(BLEManager.Instance.bLESevice.deviceAddress, 1, true,false)
             });
+            if (cor != null)
+            {
+                StopCoroutine(cor);
+                progress.ProgressValue = 1;
+            }
+
         });
         //收到检测完成
         UI_Manager.Instance.OnCheckDone += (result) =>
         {
+            last = true;
             btn_stop.interactable = false;
             btn_next.interactable = true;
             for (int i = 0; i < UI_Manager.Instance.personInfos.Length; i++)
@@ -77,14 +86,12 @@ public class UI_Panel_Checking : PanelBase
                     UI_Manager.Instance.personInfos[i].resulta = (Result)(result[i * 3 + 0]);
                     UI_Manager.Instance.personInfos[i].resultb = (Result)(result[i * 3 + 1]);
                     UI_Manager.Instance.personInfos[i].resultc = (Result)(result[i * 3 + 2]);
+                    Debug.Log("得到了结果" + (Result)(result[i * 3 + 0]));
+                    Debug.Log("得到了结果" + (Result)(result[i * 3 + 1]));
+                    Debug.Log("得到了结果" + (Result)(result[i * 3 + 2]));
                 }
             }
             //UI_Manager.Instance.SaveRecord(BLEManager.Instance.bLESevice.deviceAddress,1, true);
-            if(cor != null)
-            {
-                StopCoroutine(cor);
-                progress.ProgressValue = 1;
-            }
         };
         model.Init();
     }
@@ -104,6 +111,7 @@ public class UI_Panel_Checking : PanelBase
     }
     private IEnumerator CheckProgress()
     {
+        progress.ProgressValue = 0;
         double timer = 0;
         double timer2 = 0;
         double timer3 = 0;
@@ -111,18 +119,18 @@ public class UI_Panel_Checking : PanelBase
         {
             DateTime savedate = DateTime.Parse(UI_Manager.Instance.currentRecord.date);
 
-            timer = UI_Manager.Instance.currentRecord.progress * UI_Manager.Instance.checktime_total + (DateTime.Now - savedate).TotalSeconds;
-            UI_Manager.Instance.SaveRecord(BLEManager.Instance.bLESevice.deviceAddress, timer / UI_Manager.Instance.checktime_total, false, false);
+            timer = UI_Manager.Instance.currentRecord.progress * (UI_Manager.Instance.checktime_total ) + (DateTime.Now - savedate).TotalSeconds;
+            UI_Manager.Instance.SaveRecord(BLEManager.Instance.bLESevice.deviceAddress, timer / (UI_Manager.Instance.checktime_total ), false, false);
         }
         else
-            UI_Manager.Instance.SaveRecord(BLEManager.Instance.bLESevice.deviceAddress, timer / UI_Manager.Instance.checktime_total, false, true);
+            UI_Manager.Instance.SaveRecord(BLEManager.Instance.bLESevice.deviceAddress, timer / (UI_Manager.Instance.checktime_total ), false, true);
         Debug.Log(UI_Manager.Instance.checktime_check1 + "离心时间");
         Debug.Log(UI_Manager.Instance.checktime_total + "总时间");
         while (true)
         {
             yield return new WaitForSecondsRealtime(1);
             timer += 1;
-            float pro = (float)(timer / (double)UI_Manager.Instance.checktime_total);
+            float pro = (float)(timer / (double)(UI_Manager.Instance.checktime_total ));
             progress.ProgressValue = pro;
             Debug.Log(pro);
             if(timer >= UI_Manager.Instance.checktime_check1 + 3)
@@ -139,20 +147,39 @@ public class UI_Panel_Checking : PanelBase
             }
             if (timer >= UI_Manager.Instance.checktime_total)
             {
-                //最后获取一次数据
-                Debug.Log("请求监测数据！");
-                BLEManager.Instance.SendMessageToMCU(CMDType.GET_TEST_DATA);
-                Debug.Log("获取检测数据..................");
-                UI_Manager.Instance.SaveRecord(BLEManager.Instance.bLESevice.deviceAddress, timer / UI_Manager.Instance.checktime_total, false,false);
+                
+            }
+            if (timer >= UI_Manager.Instance.checktime_total )
+            {
+                while (!last)
+                {
+                    //最后获取一次数据
+                    Debug.Log("请求监测数据！");
+                    BLEManager.Instance.SendMessageToMCU(CMDType.GET_TEST_DATA);
+                    Debug.Log("获取检测数据..................");
+                    UI_Manager.Instance.SaveRecord(BLEManager.Instance.bLESevice.deviceAddress, timer / UI_Manager.Instance.checktime_total, false, false);
+                    yield return new WaitForSeconds(1);
+                }
+                //if (!last)
+                //{
+                //    //最后获取一次数据
+                //    Debug.Log("请求监测数据！");
+                //    BLEManager.Instance.SendMessageToMCU(CMDType.GET_TEST_DATA);
+                //    Debug.Log("获取检测数据..................");
+                //    UI_Manager.Instance.SaveRecord(BLEManager.Instance.bLESevice.deviceAddress, timer / UI_Manager.Instance.checktime_total, false, false);
+                //    last = true;
+                //}
+                progress.ProgressValue = 1;
                 break;
             }
             timer3 += 1;
             if(timer3 >= 10)
             {
                 timer3 = 0;
-                UI_Manager.Instance.SaveRecord(BLEManager.Instance.bLESevice.deviceAddress, timer / UI_Manager.Instance.checktime_total, false,false);
+                UI_Manager.Instance.SaveRecord(BLEManager.Instance.bLESevice.deviceAddress, (timer / UI_Manager.Instance.checktime_total ), false,false);
             }
         }
+        yield return new WaitForSeconds(1);
         btn_next.interactable = true;
     }
 

@@ -119,6 +119,7 @@ public class UI_Panel_Match : PanelBase
         UI_Manager.Instance.ResetState();
         btn_scan.interactable = BLEManager.Instance.connected;
         bLEButton.Connected = BLEManager.Instance.connected;
+        UI_Manager.Instance.checktime_check1 = 0;
     }
 
 
@@ -132,25 +133,40 @@ public class UI_Panel_Match : PanelBase
                  UI_Manager.Instance.qrcode = id;
                  UI_Manager.Instance.programData = res.data;
                  UI_Manager.Instance.OpenPanel<UI_Panel_ProgramInfo>();
-
+                 UI_Manager.Instance.checktime_check1 = 0;
                  Debug.Log(UI_Manager.Instance.programData.num + "    " + UI_Manager.Instance.programData.gap);
                  //设置参数，给设备发送Setting_Parmeters
+                 Debug.Log(res.data.lxParams);
                  string temp = res.data.lxParams.Replace("[", "").Replace("]", "").Replace("(","").Replace(")","");
+                 Debug.Log(temp);
                  string[] datas = temp.Split(',');
+                 string d = "";
+                 for (int i = 0; i < datas.Length; i++)
+                 {
+                     d += datas[i];
+                 }
+                 Debug.Log(d);
                  byte[] param = new byte[datas.Length];
                  
                  for (int i = 1; i < datas.Length; i+=3)
                  {
                      if (UI_Manager.Instance.programData.flag - 1 == (i - 1)/3)
-                        UI_Manager.Instance.checktime_check1+=int.Parse(datas[i])*60;
+                     {
+                         UI_Manager.Instance.checktime_check1 += int.Parse(datas[i]) * 60;
+                         Debug.Log((UI_Manager.Instance.programData.flag - 1) + i);
+                         Debug.Log("这里×60" + int.Parse(datas[i]));
+                     }
                      else
-                        UI_Manager.Instance.checktime_check1 += int.Parse(datas[i]);
+                     {
+                         UI_Manager.Instance.checktime_check1 += int.Parse(datas[i]);
 
-                     //Debug.Log(datas[i]);
+                         Debug.Log(int.Parse(datas[i]));
+                     }
+                     Debug.Log(UI_Manager.Instance.checktime_check1 + "累加");
                  }
                  Debug.Log(UI_Manager.Instance.checktime_check1 + "离心时间");
                  
-                 UI_Manager.Instance.checktime_total = UI_Manager.Instance.checktime_check1 + res.data.gap * res.data.num;
+                 UI_Manager.Instance.checktime_total = UI_Manager.Instance.checktime_check1 + res.data.gap * res.data.num + 10;
 
                  Debug.Log(UI_Manager.Instance.checktime_total + "总时间");
 
